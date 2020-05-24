@@ -1,0 +1,12 @@
+#Files required for these scripts.
+
+#FROM DRUGBANK: drugbank_all_structure_links.csv
+
+#FROM SciBiteAI: csv
+
+#FROM CORD19: metadata.csv
+
+#FROM UniProt: 
+
+curl 'https://www.uniprot.org/uniprot/?query=reviewed:yes%20taxonomy:9606&format=tab&force=true&columns=id,entry%20name,reviewed,protein%20names,genes,organism,length&compress=yes'   --compressed > human_proteins.tsv.gz
+curl 'https://www.uniprot.org/uniprot/?query=reviewed:yes%20taxonomy:694009&format=tab&force=true&columns=id,entry%20name,reviewed,protein%20names,genes,organism,length&compress=yes'   --compressed > corona_virus_proteins.tsv.gz
