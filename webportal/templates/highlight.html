@@ -1,0 +1,51 @@
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }} - Microblog</title>
+        {% else %}
+        <title>Welcome to Microblog</title>
+        {% endif %}
+    </head>
+    <body>
+	<h1>Title</h1>
+	<h2> {{title}} </h2>
+        <h1>Abstract</h1>
+        {% for abst in absts %}
+	{% if abst.highlight %}	
+	    <div><p>
+	    {% for text, high in abst.text %}
+	       {% if high %}	
+	       <b id="highlight"><font size="6">{{text}}</font></b>
+	       {% else %}
+	          {{text}}
+	       {% endif %}
+	    {% endfor %}
+            </p></div>
+	       
+	    
+	{% else %}
+        <div><p>{{ abst.text}} </p></div>
+	{% endif %}
+        {% endfor %}
+
+        <h1>Body</h1>
+        {% for body in bodys %}
+	{% if body.highlight %}
+	    <div><p>
+	    {% for text, high in body.text %}
+	       {% if high %}	
+	       <b id="highlight"><font size="6">{{text}}</font></b>
+	       {% else %}
+	          {{text}}
+	       {% endif %}
+	    {% endfor %}
+            </p></div>
+	{% else %}
+	<div><p>{{body.text}}</p></div>
+	{% endif %}
+        {% endfor %}
+    </body>
+    <script>
+        document.getElementById( 'highlight' ).scrollIntoView();
+    </script>
+</html>
