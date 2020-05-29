@@ -100,8 +100,8 @@ def convertDict(d):
     li_txt = '<div style="height:100px; overflow-y:scroll;">'
     #li_txt = '<div style="height:100px; overflow-y:scroll;"><ul>'
     for paper in papers[(targ,drug)]:
-      link = "http://35.196.80.123/highlight?paper=%s&term1=CVPROT%%23%s&term2=DRUG%%23%s" % (paper,targ,drug)
-      li_txt+='<a href="%s">%s</a></br></br>' %(link,paper)
+        link = "http://coke.mml.unc.edu/highlight?paper=%s&term1=CVPROT%%23%s&term2=DRUG%%23%s" % (paper,targ,drug)
+        li_txt+='<a href="%s">%s</a></br></br>' %(link,paper)
 
     li_txt += "</div>"
     d2["Paper Links"] = li_txt
