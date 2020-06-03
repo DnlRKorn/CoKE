@@ -1,0 +1,53 @@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.css"/>
+      
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
+
+<style>
+  table {
+    border-collapse: collapse;
+  }
+
+  table, th, td {
+      border: 1px solid black;
+  }
+  table.dataTable tbody td {
+      word-break: break-word;
+      vertical-align: top;
+  }
+  
+  ul { 
+     list-style-type:none;
+  }
+  table.dataTable tbody td.no_break {
+      word-break: normal;
+  }
+</style>
+<section id="singleton">All Targets:
+<table id="singleton">
+<thead><tr><th>Target</th><th>Name</th><th>DrugBank ID</th><th>ChEMBL ID</th><th>SMILES</th><th>Other Targets</th><th>Score</th><th>Paper Links</th></tr></thead></table>
+</section>
+
+   <script>
+    $(document).ready(function() {
+         $( "table" ).each(function(){ 
+             var x = $(this)[0].id; 
+             console.log(x); 
+             $(this).DataTable( {
+                  "ajax": '/static/'+x+'.json',
+                  "autoWidth": false,
+		  "columnDefs": [
+                     { className: "no_break", "targets": [ 1,2,3 ] }
+		  ]
+                 // "scrollY":"1000px",
+                 // "scrollCollapse":true
+
+             });
+         });
+     });
+//           $('#example').DataTable( {
+//                "ajax": '/static/P59634.json'
+//             } )
+   </script>
+   
