@@ -42,46 +42,48 @@ with open(fname, 'r') as f:
 
 
 with open(fname) as csvfile:
-  reader = csv.DictReader(csvfile, delimiter='\t')
-  last_doc = None
-
-  cnt = 0
-  for dic in reader:
-    plus_ids = dic["entity_types_plus_ids"].split("|")
-    doc_id = dic['document_id']
-    sent_id = dic['sentence_id']
-
-    if(last_doc==None):
-      last_doc=doc_id
-      tuples = set()
-      terms = set()
-      abstract_terms = set()
-
-    #When the document changes, process the dataset. Give each paper it's vote.
-    if(doc_id!=last_doc):
-      (terms,tuples) = process_abstract(abstract_terms,terms,tuples)
-      abstract_terms = set()
-      tuple_and_term_count(last_doc,terms,tuples)
-      tuples = set()
-      terms = set()
-      last_doc=doc_id
-
-    if('abstract' in sent_id):
-      for x in plus_ids:
-         abstract_terms.add(x)
-    if('body' in sent_id):
-      terms.update(plus_ids)
-      combs = combinations(plus_ids,2)
-      for comb in combs:
-         if(len(comb)!=2):continue
-         if(comb[0] < comb[1]):tuples.add(comb)
-         elif(comb[0] > comb[1]):tuples.add((comb[1],comb[0]))
-    if(cnt%10000==0):
-      print(cnt,cnt / total_sentence_count)
-    cnt+=1
+    reader = csv.DictReader(csvfile, delimiter='\t')
+    last_doc = None
+  
+    cnt = 0
+    for dic in reader:
+        plus_ids = dic["entity_types_plus_ids"].split("|")
+        doc_id = dic['document_id']
+        sent_id = dic['sentence_id']
+    
+        if(last_doc==None):
+          last_doc=doc_id
+          tuples = set()
+          terms = set()
+          abstract_terms = set()
+    
+        #When the document changes, process the dataset. Give each paper it's vote.
+        if(doc_id!=last_doc):
+          (terms,tuples) = process_abstract(abstract_terms,terms,tuples)
+          abstract_terms = set()
+          tuple_and_term_count(last_doc,terms,tuples)
+          tuples = set()
+          terms = set()
+          last_doc=doc_id
+    
+        if('abstract' in sent_id):
+          for x in plus_ids:
+             abstract_terms.add(x)
+        if('body' in sent_id):
+          terms.update(plus_ids)
+          combs = combinations(plus_ids,2)
+          for comb in combs:
+             if(len(comb)!=2):continue
+             if(comb[0] < comb[1]):tuples.add(comb)
+             elif(comb[0] > comb[1]):tuples.add((comb[1],comb[0]))
+        if(cnt%10000==0):
+          print(cnt,cnt / total_sentence_count)
+        cnt+=1
+    (terms,tuples) = process_abstract(abstract_terms,terms,tuples)
+    tuple_and_term_count(last_doc,terms,tuples)
 
 with open(os.path.join(data_dir,'CORD19_co-occurrence_pairs.csv'),'w') as f:
-  field_names = ['Term1','Term2','Term1Cnt','Term2Cnt','Co-occurrenceCnt','Papers']
+  fieldnames = ['Term1','Term2','Term1Cnt','Term2Cnt','Co-occurrenceCnt','Papers']
   writer = csv.DictWriter(f,fieldnames=fieldnames)
   writer.writeheader()
   for tup in tup_counts:
@@ -91,10 +93,11 @@ with open(os.path.join(data_dir,'CORD19_co-occurrence_pairs.csv'),'w') as f:
     d["Term1Cnt"] = term_counts[tup[0]]
     d["Term2Cnt"] = term_counts[tup[1]]
     d["Co-occurrenceCnt"] = tup_counts[tup]
-    paps = papers[s]
+    paps = papers[tup]
     paps = list(paps)
     paps.sort()
     d["Papers"] = ','.join(paps)
+    writer.writerow(d)
+
     
-    f.write(k[0]+','+k[1]+','+str(cnt1)+","+str(cnt2)+","  +str(co_occur_cnt)+ ',' + ','.join(paps) + '\n')
 

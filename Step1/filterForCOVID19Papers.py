@@ -14,6 +14,10 @@ with open(os.path.join(data_dir,"cv19_scc.tsv"),'r') as f:
             if("SARSCOV#" in tag): covid_papers.add(doc_id)
 print("We have identified %d papers in CORD19 which contain a tag related to COVID-19." % len(covid_papers))
 
+with open(os.path.join(data_dir,"filtered_papers_cnt.txt"),'w') as f:
+    f.write(str(len(covid_papers)))
+
+
 with open(os.path.join(data_dir,"cv19_scc.tsv"),'r') as f, open(os.path.join(data_dir,"cv19_scc_filtered_for_COVID.tsv"),'w') as filtered_file:
     header = next(f)
     filtered_file.write(header)
