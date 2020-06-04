@@ -2,7 +2,6 @@ import csv
 import os
 
 data_dir = os.path.join(os.path.dirname(os.getcwd()),"data")
-csv_dir = os.path.join(os.path.dirname(os.getcwd()),"data","csv")
 
 drugs = set() 
 pairs = {} 
@@ -81,31 +80,9 @@ for targ in pairs:
                    writer.writerow(write_dict)
                    all_tuples.append(write_dict)
                    
+#Build a csv with all drug/protein pairings in it.
 outfname = os.path.join(data_dir,'csv',"singleton.csv")
 with open(outfname,'w') as csvfile:
     writer = csv.DictWriter(csvfile,fieldnames=["Target","Name","DrugBank ID","ChEMBL ID","SMILES","Other Targets","Score","Papers"])
     writer.writeheader()
     for d in all_tuples: writer.writerow(d)
-'''
-j = []
-for targ in pairs:
-   with open("data/structure_links_filtered.csv") as f2:
-         reader = csv.DictReader(f2)
-         for d in reader:
-           chem = d['ChEMBL ID'].strip()
-           if(chem in pairs[targ]):
-             #tup_count+=1
-             bank = d["DrugBank ID"]
-             cnt = d["Targets"]
-             smile = d["SMILES"]
-             d["Target"] = targ
-             d["Other Targets"] = cnt
-             d = convertDict(d)
-             l = []
-             for x in ["Target","Name","DrugBank ID","ChEMBL ID","SMILES","Other Targets","Score","Paper Links"]:
-               l.append(d[x])
-             j.append(l)
-json_data = {"data":j}
-with open("data/singleton.json",'w') as f:
-   json.dump(json_data,f)
-'''
