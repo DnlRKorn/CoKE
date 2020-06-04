@@ -1,4 +1,5 @@
 import os
+import csv
 import jinja2
 
 data_dir = os.path.join(os.path.dirname(os.getcwd()),"data")
@@ -58,33 +59,63 @@ for prot in prot_drug_hits:
 with open(os.path.join("templates","dtd_table_json.html"),'r') as f: template = f.read()
 template = jinja2.Template(template)
 rendered = template.render(tables_info=tables_info)
-with open(os.path.join(data_dir,"html","dtd_table_json.html"),'w') as f:
+with open(os.path.join(data_dir,"html","dtd_table.html"),'w') as f:
     f.write(rendered)
     
 d = { "idx":"singleton", "protein_name":"All Targets" }
 rendered = template.render(tables_info=[d])
-with open(os.path.join(data_dir,"html","dtd_table_singleton_json.html"),'w') as f:
+with open(os.path.join(data_dir,"html","dtd_table_singleton.html"),'w') as f:
     f.write(rendered)
 
 
 ### Build target_info.html.
-target_info = {} 
+target_infos = {} 
 with  open(os.path.join(data_dir,"corona_virus_proteins.tsv"),'r') as csvfile:
   reader = csv.DictReader(csvfile,delimiter='\t')
   for row in reader:
       prot_idx = row["Entry"]
-      target_info[prot_idx] = row
+      target_infos[prot_idx] = row
 
 with  open(os.path.join(data_dir,"human_proteins.tsv"),'r') as csvfile:
   reader = csv.DictReader(csvfile,delimiter='\t')
   for row in reader:
       prot_idx = row["Entry"]
-      target_info[prot_idx] = row
+      target_infos[prot_idx] = row
 
 target_info_rows = []
 for prot in prot_drug_hits:
     if(prot=="singleton"):continue
-    link = "https://www.uniprot.org/uniprot/%s" % prot 
-    prot_name = "(" + prot_names[prot].strip() + ")"
-    d = { "idx":prot, "title":prot,  "uniprot_link":link, "protein_name":prot_name }
-    tables_info.append(d)
+    target_info = target_infos[prot]
+    d = {}
+    d["prot_idx"] = prot
+    d["entry_name"] = target_info["Entry name"]
+    d["status"] = target_info["Status"]
+    d["prot_name"] = target_info["Protein names"]
+    d["gene"] = target_info["Gene names"]
+    d["gene_length"] = target_info["Length"]
+    d["organism"] = target_info["Organism"]
+    d["drug_count"] = prot_drug_hits[prot]
+
+    target_info_rows.append(d)
+
+with open(os.path.join("templates","target_info.html"),'r') as f: template = f.read()
+template = jinja2.Template(template)
+rendered = template.render(targets=target_info_rows)
+with open(os.path.join(data_dir,"html","target_info.html"),'w') as f:
+    f.write(rendered)
+
+
+'''
+{'Status': 'reviewed', 'Gene names': '3', 'Length': '274', 'Entry name': 'AP3A_BC279', 'Protein names': 'Protein 3 (Accessory protein 3)', 'Entry': 'Q0Q474', 'Organism': 'Bat coronavirus 279/2005 (BtCoV) (BtCoV/279/2005)'}
+{% for row in targets %}
+ <tr>
+         <td><a href="https://www.uniprot.org/uniprot/{{ row.prot_idx }}">{{ row.prot_idx }}</a></td>
+         <td>{{ row.entry_name }}</td>
+         <td>{{ row.status }}</td>
+         <td>{{ row.prot_name }}</td>
+         <td>{{ row.gene }}</td>
+         <td>{{ row.organism }}</td>
+         <td>{{ row.gene_length }}</td>
+         <td><a href="http://coke.mml.unc.edu/static/dtd_table.html# {{ row.prot_idx }}">{{ row.drug_count }}</a></td>
+ </tr>
+ '''
