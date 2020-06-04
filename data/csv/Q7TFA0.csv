@@ -1,0 +1,2 @@
+Target,Name,DrugBank ID,ChEMBL ID,SMILES,Other Targets,Score,Papers
+Q7TFA0,Amiloride,DB00594,CHEMBL945,NC(=N)NC(=O)C1=NC(Cl)=C(N)N=C1N,9,-0.10057466314174235,1cd621a792bc7ac02d4cdf0392ffc3feded13b0e

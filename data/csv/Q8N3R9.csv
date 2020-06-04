@@ -1,0 +1,3 @@
+Target,Name,DrugBank ID,ChEMBL ID,SMILES,Other Targets,Score,Papers
+Q8N3R9,Ergocalciferol,DB00153,CHEMBL1536,CC(C)[C@@H](C)\C=C\[C@@H](C)[C@@]1([H])CC[C@@]2([H])\C(CCC[C@]12C)=C\C=C1\C[C@@H](O)CCC1=C,27,-1.2043570982059464,PMC2982091.xml
+Q8N3R9,Brefeldin A,DB07348,CHEMBL19980,[H][C@]1(O)C[C@@]2([H])\C=C\CCC[C@]([H])(C)OC(=O)\C=C\[C@@]([H])(O)[C@]2([H])C1,2,-0.05562004490975282,"""8996c8a004bc82aca37ba1f1f4265868503ce69f|PMC3068181.xml"""
