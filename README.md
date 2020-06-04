@@ -18,6 +18,6 @@ The following files must be place in the directory data.
 
 curl 'https://www.uniprot.org/uniprot/?query=reviewed:yes%20taxonomy:9606&format=tab&force=true&columns=id,entry%20name,reviewed,protein%20names,genes,organism,length&compress=yes'   --compressed > human_proteins.tsv.gz
 
-corona_virus_proteins.tsv: This file comes from UniProt and contains a hand reviewed list of all Corona Virus viral proteins. The database may be inspected here https://www.uniprot.org/uniprot/?query=reviewed:yes%20taxonomy:694009, for convience and to keep parameters we suggest running the cURL command below
+<b>corona_virus_proteins.tsv</b>: This file comes from UniProt and contains a hand reviewed list of all Corona Virus viral proteins. The database may be inspected here https://www.uniprot.org/uniprot/?query=reviewed:yes%20taxonomy:694009, for convience and to keep parameters we suggest running the cURL command below
 
 curl 'https://www.uniprot.org/uniprot/?query=reviewed:yes%20taxonomy:694009&format=tab&force=true&columns=id,entry%20name,reviewed,protein%20names,genes,organism,length&compress=yes'   --compressed > corona_virus_proteins.tsv.gz
