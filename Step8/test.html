@@ -1,4 +1,5 @@
-
+<html>
+<head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.css"/>
       
@@ -23,13 +24,24 @@
   table.dataTable tbody td.no_break {
       word-break: normal;
   }
+
+  table.dataTable tbody td.pap_links {
+      min-width:200
+  }
 </style>
-<section id="singleton">All Targets:
-<table id="singleton">
-<thead><tr><th>Target</th><th>Name</th><th>DrugBank ID</th><th>ChEMBL ID</th><th>SMILES</th><th>Other Targets</th><th>Score</th><th>Paper Links</th></tr></thead></table>
+</head>
+<body>
+
+<section id="singleton"><a href=""></a> All Targets: 
+    <table id="singleton">
+        <thead>
+    	    <tr><th>Target</th><th>Name</th><th>DrugBank ID</th><th>ChEMBL ID</th><th>SMILES</th><th>Other Targets</th><th>Score</th><th>Paper Links</th></tr>
+        </thead>
+    </table>
 </section>
 
-   <script>
+</body>
+<script>
     $(document).ready(function() {
          $( "table" ).each(function(){ 
              var x = $(this)[0].id; 
@@ -38,16 +50,11 @@
                   "ajax": '/static/'+x+'.json',
                   "autoWidth": false,
 		  "columnDefs": [
-                     { className: "no_break", "targets": [ 1,2,3 ] }
+                     { className: "no_break", "targets": [ 1,2,3 ] },
+                     { className: "pap_links", "targets": [ 7 ] }
 		  ]
-                 // "scrollY":"1000px",
-                 // "scrollCollapse":true
-
              });
          });
      });
-//           $('#example').DataTable( {
-//                "ajax": '/static/P59634.json'
-//             } )
-   </script>
-   
+</script>
+</html>

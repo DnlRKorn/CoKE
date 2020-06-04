@@ -1,0 +1,71 @@
+<head>
+<title>CoKE: COVID-19 Knowledge Extractor</title>
+<style>
+  .flex-container {
+  flex-direction: row-reverse;
+    display: flex;
+    flex-wrap: wrap;
+    /*line-height: 75px;*/
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+  }
+  .flex-item {
+    display: flex;
+    position: relative;
+    margin-top: 10px;
+    margin-right: 10px;
+	width: 20%
+  }
+   a.button-tile {
+    background: #e6f2ff;
+    padding: 15px;
+    width: 85vw;
+    min-height: 97px;
+    max-height: 250px;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+  }
+  a.button-tile:hover {
+    background: #7aa9d391;
+  } 
+  div.disclaim {
+    background: lightblue;
+    border: blue;
+    margin: 20;
+
+  }
+  h1 {
+    margin: 20;
+  }
+
+</style>
+</head>
+<body>
+   <h1>CoKE: COVID-19 Knowledge Extractor</h1>
+   <div class="disclaim">
+           <span>These tables are based NER (Named Entity Recognition). Some of the hits identified may not be genuine. Please inspect each paper and use your intution to access how valuable a target/drug connection is. Ontological matches processed come from <a href="https://github.com/SciBiteLabs/CORD19">SciBiteAI</a>.
+ Source code for the CoKE dataset analysis and webportal is available <a href="https://github.com/DnlRKorn/CoKE">here</a>.</span>
+   </div>
+<div class="flex-container">
+
+{% for protein in protein_info: %}
+    <div class="flex-item">
+	    <a href="{{protein.link}}"class="button-tile">
+		    <h3 class="dark-title">{{ protein.idx }}</h3>
+		    <h4>{{ protein.name }} </h4>
+		<p class="dark-text">{{ protein.hits }} drugs found in our database.</p>
+           </a>
+    </div>
+{% endfor %}
+</div>
+<div class="disclaim">
+	<a href="/static/target_info.html">Table of information on individual targets</a>
+	</br>
+	</br>
+	<a href="/static/dtd_table_singleton.html">Table of all target to drug connections</a>
+</div>
+</body>
+</html>
