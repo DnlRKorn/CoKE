@@ -12,7 +12,7 @@ for root, dirs, files in os.walk(cord_dir, topdown=False):
 
 
 def highlight_v2(pap_idx,terms):
-   if(pap_idx not in papers_dic): return False
+   if(pap_idx not in papers_dic): return 'No find' 
    terms = set(terms)
    db_pass = os.environ["DB_PASS"]
 
@@ -26,7 +26,9 @@ def highlight_v2(pap_idx,terms):
       sentences.sent_end,
       sentences.terms,
       papers.journal,
-      papers.license
+      papers.license,
+      papers.doi,
+      papers.source_x
     FROM
       sentences
     LEFT JOIN papers 
@@ -41,7 +43,9 @@ def highlight_v2(pap_idx,terms):
    
    for row in rows:
        journal = row[5]
-       if(row[6]=='unk'):return False
+       source_x = row[8]
+       doi = row[7]
+       license = row[6]
        if(row[0]=='abstract'):
            for term in row[4]:
                abst_terms.add(term)
@@ -100,6 +104,9 @@ def highlight_v2(pap_idx,terms):
        dic['body'] = body
 
    dic['journal'] = journal
+   dic['doi'] = doi
+   if((license=='unk') & ("PMC" not in source_x)):
+       dic['body'] = 'unk' 
    return dic 
 
 

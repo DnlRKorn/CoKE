@@ -1,1 +1,1 @@
-uwsgi --http :80 --wsgi-file app.py --callable app
+uwsgi -s mysite.sock --wsgi-file app.py --callable app -C
