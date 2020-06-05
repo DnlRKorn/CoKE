@@ -1,0 +1,10 @@
+<head>
+	<style>
+	</style>
+</head>
+<body>
+{% for row in downloads %}
+   <a href="/static/{{ row }}.csv" download>{{row}}.csv</a></br></br>
+{% endfor %}
+</body>
+</html>

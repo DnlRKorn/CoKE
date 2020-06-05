@@ -107,17 +107,10 @@ with open(os.path.join(data_dir,"html","target_info.html"),'w') as f:
     f.write(rendered)
 
 
-'''
-{'Status': 'reviewed', 'Gene names': '3', 'Length': '274', 'Entry name': 'AP3A_BC279', 'Protein names': 'Protein 3 (Accessory protein 3)', 'Entry': 'Q0Q474', 'Organism': 'Bat coronavirus 279/2005 (BtCoV) (BtCoV/279/2005)'}
-{% for row in targets %}
- <tr>
-         <td><a href="https://www.uniprot.org/uniprot/{{ row.prot_idx }}">{{ row.prot_idx }}</a></td>
-         <td>{{ row.entry_name }}</td>
-         <td>{{ row.status }}</td>
-         <td>{{ row.prot_name }}</td>
-         <td>{{ row.gene }}</td>
-         <td>{{ row.organism }}</td>
-         <td>{{ row.gene_length }}</td>
-         <td><a href="http://coke.mml.unc.edu/static/dtd_table.html# {{ row.prot_idx }}">{{ row.drug_count }}</a></td>
- </tr>
- '''
+downloads = []
+for prot in prot_drug_hits:downloads.append(prot)
+with open(os.path.join("templates","downloads.html"),'r') as f: template = f.read()
+template = jinja2.Template(template)
+rendered = template.render(downloads=downloads)
+with open(os.path.join(data_dir,"html","downloads.html"),'w') as f:
+    f.write(rendered)
