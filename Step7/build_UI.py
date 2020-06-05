@@ -61,6 +61,8 @@ template = jinja2.Template(template)
 rendered = template.render(tables_info=tables_info)
 with open(os.path.join(data_dir,"html","dtd_table.html"),'w') as f:
     f.write(rendered)
+with open(os.path.join(data_dir,"html","dtd_table_json.html"),'w') as f:
+    f.write(rendered)
     
 d = { "idx":"singleton", "protein_name":"All Targets" }
 rendered = template.render(tables_info=[d])

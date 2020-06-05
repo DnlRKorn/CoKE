@@ -102,7 +102,7 @@ def highlight_route():
 
 
 
-   return render_template('highlight.html', title=dic['title'], absts=dic['abstract'],bodys=dic['body'])
+   return render_template('highlight.html', title=dic['title'], absts=dic['abstract'],bodys=dic['body'],journal=dic['journal'])
    #return jsonify(dic)
 
 

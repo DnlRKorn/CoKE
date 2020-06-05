@@ -19,8 +19,8 @@ def convertDict(d):
 
     li_txt = '<div style="height:100px; overflow-y:scroll;">'
     for paper in d["Papers"].split("|"):
-        link = "http://coke.mml.unc.edu/highlight?paper=%s&term1=CVPROT%%23%s&term2=DRUG%%23%s" % (paper,targ,drug)
-        li_txt+='<a href="%s">%s</a></br></br>' %(link,paper)
+        link = "http://coke.mml.unc.edu/highlight?paper=%s&term1=CVPROT%%23%s&term2=DRUG%%23%s" % (paper.strip().replace('"',""),targ,drug)
+        li_txt+='<a href="%s">%s</a></br></br>' %(link,paper.strip().replace('"',''))
 
     li_txt += "</div>"
     d2["Paper Links"] = li_txt

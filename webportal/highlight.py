@@ -14,7 +14,9 @@ for root, dirs, files in os.walk(cord_dir, topdown=False):
 def highlight_v2(pap_idx,terms):
    if(pap_idx not in papers_dic): return False
    terms = set(terms)
-   conn = psycopg2.connect("dbname='covid_text' user='dbuser' host='localhost' password='dbpass'")
+   db_pass = os.environ["DB_PASS"]
+
+   conn = psycopg2.connect("dbname='highlight' user='dbuser' host='localhost' password='%s'"%db_pass)
    cur = conn.cursor()
    query = '''
       SELECT
@@ -25,21 +27,21 @@ def highlight_v2(pap_idx,terms):
       sentences.terms,
       papers.journal,
       papers.license
-
     FROM
       sentences
     LEFT JOIN papers 
     ON papers.paper_idx=sentences.paper_idx
     WHERE
-      sentences.paper_idx= %(term)s 
+      sentences.paper_idx= %(pap_idx)s 
       '''
-      #count DESC''':wq
-
-   cur.execute(query,{"term":pap_idx})
+   cur.execute(query,{"pap_idx":pap_idx})
    rows = cur.fetchall()
    abst_terms = set()
    body_dic = {}
+   
    for row in rows:
+       journal = row[5]
+       if(row[6]=='unk'):return False
        if(row[0]=='abstract'):
            for term in row[4]:
                abst_terms.add(term)
@@ -97,9 +99,7 @@ def highlight_v2(pap_idx,terms):
           body.append(d)
        dic['body'] = body
 
-    #tree = pET.parse(path)
-    #root = tree.getroot()
-   #print(dic,'hi')
+   dic['journal'] = journal
    return dic 
 
 
