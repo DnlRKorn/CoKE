@@ -18,19 +18,20 @@ def highlight_v2(pap_idx,terms):
    cur = conn.cursor()
    query = '''
       SELECT
-      s.location,
-      s.para_num,
-      s.sent_start,
-      s.sent_end,
-      s.terms,
-      p.journal,
-      p.license
+      sentences.location,
+      sentences.para_num,
+      sentences.sent_start,
+      sentences.sent_end,
+      sentences.terms,
+      papers.journal,
+      papers.license
 
     FROM
-      sentence as s,
-      papers as p
+      sentences
+    LEFT JOIN papers 
+    ON papers.paper_idx=sentences.paper_idx
     WHERE
-      paper_idx= %(term)s 
+      sentences.paper_idx= %(term)s 
       '''
       #count DESC''':wq
 
@@ -43,7 +44,11 @@ def highlight_v2(pap_idx,terms):
            for term in row[4]:
                abst_terms.add(term)
        if(row[0]=='body'):
+
+           #Get the list of terms found in this sentence.
            l = body_dic.get(row[1],[])
+
+           #Sentence_start, Sentence_end, Terms
            l.append((row[2],row[3],row[4]))
            body_dic[row[1]] = l
    highlight_abst = False
