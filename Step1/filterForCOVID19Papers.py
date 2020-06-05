@@ -27,3 +27,15 @@ with open(os.path.join(data_dir,"cv19_scc.tsv"),'r') as f, open(os.path.join(dat
         if(doc_id in covid_papers):
             filtered_file.write(line)
     
+scibite_tags_cnt = 0
+with open(os.path.join(data_dir,"cv19_scc.tsv"),'r') as f:
+    next(f) #Ignore header file.
+    for line in f:
+        fields = line.split('\t')
+        doc_id = fields[0]
+        tags = fields[3]
+        if(doc_id not in covid_papers):continue
+        for tag in tags.split("|"):
+            scibite_tags_cnt+=1
+print("We have identified %d ontological tags from SciBite." % scibite_tags_cnt)
+

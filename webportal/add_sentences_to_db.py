@@ -9,6 +9,12 @@ db_pass = os.environ["DB_PASS"]
 conn = psycopg2.connect("dbname='highlight' user='dbuser' host='localhost' password='%s'"%db_pass)
 cur = conn.cursor()
 
+cur.execute("SELECT paper_idx FROM papers")
+rows = cur.fetchall()
+pap_idxs = set()
+for r in rows:
+    pap_idxs.add(r[0])
+
 sents = []
 fname = os.path.join(data_dir,"cv19_scc.tsv")
 insert_query = "INSERT INTO sentences (paper_idx, location, para_num, sent_num, sent_start, sent_end, terms) VALUES %s"
@@ -31,7 +37,7 @@ with open(fname,'r') as f:
         #l[3] Terms.split("|")
         #l[4] sent_start - sent_end
         paper_idx = l[0]
-        if(paper_idx=="eb5c7f3ff921ad6469b79cc8a3c122648204ece4"):continue
+        if(paper_idx not in pap_idxs):continue
         if('title' in l[1]):
            (loc,sent_num) = l[1].split("_")
            para_num = 0
