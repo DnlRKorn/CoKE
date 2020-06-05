@@ -1,23 +1,19 @@
-
-#PMC3320336.xml	body_2_2	US|https://id.nlm.nih.gov/mesh/D006678|https://id.nlm.nih.gov/mesh/D015658	COUNTRY#US|SPECIES#D006678|INDICATION#D015658	308-489
 import psycopg2
 from psycopg2.extras import execute_values
-'''
-try:
-   conn = psycopg2.connect("dbname='covid-text' user='postgres' host='localhost'")
-except:
-   print "I am unable to connect to the database"
-   '''
+import os
 
+data_dir = os.path.join(os.path.dirname(os.getcwd()),"data")
 
-conn = psycopg2.connect("dbname='covid_text' user='dbuser' host='localhost' password='dbpass'")
+db_pass = os.environ["DB_PASS"]
+
+conn = psycopg2.connect("dbname='highlight' user='dbuser' host='localhost' password='%s'"%db_pass)
 cur = conn.cursor()
 
 sents = []
-fname = "/home/dkorn_unc_edu/CORD19/sentence-co-occurrence-CORD-19/1.2/cv19_scc.tsv"
+fname = os.path.join(data_dir,"cv19_scc.tsv")
 insert_query = "INSERT INTO sentences (paper_idx, location, para_num, sent_num, sent_start, sent_end, terms) VALUES %s"
 cnt=-1
-with open(fname) as f:
+with open(fname,'r') as f:
     next(f)
     print("Starting loop")
     for line in f:
@@ -35,6 +31,7 @@ with open(fname) as f:
         #l[3] Terms.split("|")
         #l[4] sent_start - sent_end
         paper_idx = l[0]
+        if(paper_idx=="eb5c7f3ff921ad6469b79cc8a3c122648204ece4"):continue
         if('title' in l[1]):
            (loc,sent_num) = l[1].split("_")
            para_num = 0
@@ -58,16 +55,7 @@ with open(fname) as f:
 insert_query = "INSERT INTO sentences (paper_idx, location, para_num, sent_num, sent_start, sent_end, terms) VALUES %s"
 #insert_query = "INSERT INTO sentences (paper_idx, location, para_num, sent_num, sent_start, sent_end, term1, term2) VALUES %s"
 psycopg2.extras.execute_values( cur, insert_query, sents, template=None, page_size=1000)
-#for (paper_idx,loc,para_num,sent_num,start,end,t1,t2) in sents:
-#    cur.execute("INSERT INTO sentences (paper_idx, location, para_num, sent_num, sent_start, sent_end, term1, term2) VALUES(%s, %s, %s, %s, %s, %s, %s, %s) ", (paper_idx,loc,para_num,sent_num,start,end,t1.strip(),t2.strip()))
 
-#conn = psycopg2.connect("dbname='covid_text' user='dbuser' host='localhost' password='dbpass'")
-#cur = conn.cursor()
-
-#cur.execute("CREATE TABLE term ( term_name character(60) PRIMARY KEY, key character(10), tag character(50), link text)");
-
-#    cur.execute("INSERT INTO terms (term_name, tag,key, link) VALUES(%s, %s, %s, %s) ", (term,tag,key,link))
-    #cursor.execute("INSERT INTO terms (term_name, key, tag, link) VALUES(%s, %s, %s, %s) ON CONFLICT DO NOTHING", (prot,chem,overlap,score,papers))
 conn.commit()
 
 conn.close()

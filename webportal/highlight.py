@@ -1,116 +1,7 @@
 import os
 import json
-
-#papers = os.listdir("/home/dkorn_unc_edu/CORD19/data")
-data2 = None
-def highlight(pap_idx,term1,term2):
-    if(pap_idx+".json" not in papers): return False
-    path = '/home/dkorn_unc_edu/CORD19/data/%s.json'%pap_idx
-    with open(path) as f:
-       data = json.load(f)
-       #print(dir(data))
-       #print(data.keys())
-       #data2 = data
-       dic = {}
-       title = data['metadata']['title']
-       dic["title"] = title
-       abst = []
-       #"termite_hits"
-       tag1=None
-       key1=None
-       tag2=None
-       key2=None
-       if(term1!=None): (tag1,key1) = term1.split("#")
-       if(term2!=None): (tag2,key2) = term2.split("#")
-       # "termite_hits"
-
-       for x in data['abstract']:
-          poss = []
-          poss2 = []
-          locs = {}
-          highlight_zone = []
-          hits = x["termite_hits"]
-          if(tag1 in hits and tag2 in hits):
-              for y in hits[tag1]:
-                  if(key1 in y['id']):
-                      poss = y["hit_sentences"]
-                      for i in range(len(poss)):
-                          locs[poss[i]] = y["hit_sentence_locations"][i]
-                      break
-              for y in hits[tag2]:
-                  if(key2 in y['id']):
-                      poss2 = y["hit_sentences"]
-                      break
-              if(len(poss)!=0 and len(poss2)!=0):
-                  inter = set(poss) & set(poss2)
-                  if(len(inter)!=0):
-                      for z in inter:
-                          highlight_zone.append(locs[z])
-
-
-
-
-
-          #print(y['text'])
-          d = {}
-          d['text']=x['text']
-          d['highlight']=False
-          if(len(highlight_zone)!=0):
-              d['highlight_zone'] = highlight_zone
-              d['highlight']=True
-          abst.append(d)
-              
-       dic['abstract'] = abst
-       body = []
-       for x in data['body_text']:
-          poss = []
-          poss2 = []
-          locs = {}
-          highlight_zone = []
-          hits = x["termite_hits"]
-          if(tag1 in hits and tag2 in hits):
-              for y in hits[tag1]:
-                  if(key1 in y['id']):
-                      poss = y["hit_sentences"]
-                      for i in range(len(poss)):
-                          locs[poss[i]] = y["hit_sentence_locations"][i]
-                      break
-              for y in hits[tag2]:
-                  if(key2 in y['id']):
-                      poss2 = y["hit_sentences"]
-                      break
-              if(len(poss)!=0 and len(poss2)!=0):
-                  inter = set(poss) & set(poss2)
-                  if(len(inter)!=0):
-                      for z in inter:
-                          highlight_zone.append(locs[z])
-
-
-
-
-
-          d = {}
-          d['text']=x['text']
-          #abst.append({'text':y['text']})
-          d['highlight']=False
-          if(len(highlight_zone)!=0):
-              d['highlight_zone'] = highlight_zone
-              d['highlight']=True
-          body.append(d)
-       dic['body'] = body
-
-    #tree = pET.parse(path)
-    #root = tree.getroot()
-    return dic 
-
-
 import psycopg2
 
-#SELECT * FROM sentences WHERE sentences.paper_idx='PMC2750777.xml' ;
-
-
-    #print(x)
-#x = highlight("0acc1f9a1c333a9a6b2dbba4a252d7576f024783","text1","text2")
 papers_dic = {}  
 cord_dir = "/home/dkorn_unc_edu/CORD19/annotated-CORD-19/1.4/CORD19"
 for root, dirs, files in os.walk(cord_dir, topdown=False):
@@ -121,29 +12,30 @@ for root, dirs, files in os.walk(cord_dir, topdown=False):
 
 
 def highlight_v2(pap_idx,terms):
-   print(terms)
+   if(pap_idx not in papers_dic): return False
    terms = set(terms)
-   print(terms)
    conn = psycopg2.connect("dbname='covid_text' user='dbuser' host='localhost' password='dbpass'")
    cur = conn.cursor()
    query = '''
       SELECT
-      location,
-      para_num,
-      sent_start,
-      sent_end,
-      terms
+      s.location,
+      s.para_num,
+      s.sent_start,
+      s.sent_end,
+      s.terms,
+      p.journal,
+      p.license
+
     FROM
-      sentences
+      sentence as s,
+      papers as p
     WHERE
       paper_idx= %(term)s 
       '''
       #count DESC''':wq
 
    cur.execute(query,{"term":pap_idx})
-   #conn.close()
    rows = cur.fetchall()
-   #print(rows)
    abst_terms = set()
    body_dic = {}
    for row in rows:
@@ -159,11 +51,6 @@ def highlight_v2(pap_idx,terms):
         highlight_abst=True
 
 
-   #print(abst_terms)
-
-   #for row in rows:
-
-   if(pap_idx not in papers_dic): return False
 #   path = '/home/dkorn_unc_edu/CORD19/data/%s.json'%pap_idx
    path = papers_dic[pap_idx]
    print(terms)
@@ -194,12 +81,10 @@ def highlight_v2(pap_idx,terms):
           for (sent_start,sent_end,sent_terms) in l:
 
              if( len(terms)== len(terms.intersection(set(sent_terms))) ):
-                 print("HIT")
                  highlight_zone.append((sent_start,sent_end))
 
           d = {}
           d['text']=x['text']
-          #abst.append({'text':y['text']})
           d['highlight']=False
           if(len(highlight_zone)!=0):
               d['highlight_zone'] = highlight_zone
