@@ -29,7 +29,11 @@ with open(fname,'r') as inf, open(outfname,'w') as outf:
         # Then number of papers with term 2 (n) is total number of Type I objects.
         # The random variate(x) represents the number of Type I objects in N drawn (the number of papers with both)
         #  without replacement from the total population (len curies).
-        enrichp = hypergeom.logcdf(SharedCount - 1, total_paper_count, CountTerm2, CountTerm1)
+        try:
+           enrichp = -1.0 * hypergeom.logcdf(SharedCount - 1, total_paper_count, CountTerm2, CountTerm1)
+        except:
+            print(d)
+            exit()
         d['Score'] = enrichp
         writer.writerow(d)
         cnt+=1 

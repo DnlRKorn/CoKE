@@ -1,4 +1,5 @@
 import csv
+import sys
 from itertools import combinations 
 import os
 
@@ -77,7 +78,7 @@ with open(fname) as csvfile:
              if(comb[0] < comb[1]):tuples.add(comb)
              elif(comb[0] > comb[1]):tuples.add((comb[1],comb[0]))
         if(cnt%10000==0):
-          print(cnt,cnt / total_sentence_count)
+            sys.stderr.write("Sentences processed:%d Percent Complete: %f\n"%(cnt,1.0*cnt / total_sentence_count))
         cnt+=1
     (terms,tuples) = process_abstract(abstract_terms,terms,tuples)
     tuple_and_term_count(last_doc,terms,tuples)
@@ -100,4 +101,4 @@ with open(os.path.join(data_dir,'CORD19_co-occurrence_pairs.csv'),'w') as f:
     writer.writerow(d)
 
     
-
+print("We have %d tuples after filtering for protein/drug relationships!" % len(tup_counts))

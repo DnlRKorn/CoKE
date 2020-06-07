@@ -2,6 +2,8 @@ import os
 
 data_dir = os.path.join(os.path.dirname(os.getcwd()),"data")
 covid_papers = set()
+
+test = {}
 #with open("../
 with open(os.path.join(data_dir,"cv19_scc.tsv"),'r') as f:
     next(f) #Ignore header file.
@@ -11,8 +13,25 @@ with open(os.path.join(data_dir,"cv19_scc.tsv"),'r') as f:
         tags = fields[3]
         if(doc_id in covid_papers):continue
         for tag in tags.split("|"):
-            if("SARSCOV#" in tag): covid_papers.add(doc_id)
+            (key,value)=tag.split("#")
+            if("SARSCOV#NCBITaxon" in tag): 
+                covid_papers.add(doc_id)
+            elif("INDICATION#" in tag):
+                if(value in ["D018352","D045473","D045169"]):
+                    covid_papers.add(doc_id)
+                    s = test.get(tag,set())
+                    s.add(doc_id)
+                    test[tag] = s
+            elif("SPECIES#" in tag):
+                if(value in ["D045473","D017934"]):
+                    covid_papers.add(doc_id)
+                    s = test.get(tag,set())
+                    s.add(doc_id)
+                    test[tag] = s
+for x in test:
+    print(x,len(test[x]))
 print("We have identified %d papers in CORD19 which contain a tag related to COVID-19." % len(covid_papers))
+exit()
 
 with open(os.path.join(data_dir,"filtered_papers_cnt.txt"),'w') as f:
     f.write(str(len(covid_papers)))
