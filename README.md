@@ -12,6 +12,8 @@ The following files must be place in the directory data.
 
 <b>structure_links.csv</b>: This file contains data on all chemicals in DrugBank. It is available here https://www.drugbank.ca/releases/5-1-6/downloads/all-structure-links. To enable downloading, a free DrugBank account must be created.
 
+<b>DBCAT000021</b>:This is the website hosted https://www.drugbank.ca/categories/DBCAT000021 which contains a list of all amino acids currently in DrugBank.
+
 <b>uniprot_links.csv</b>: This is a file from drugbank which describes all DrugBank -> UniProt target ids. Please download from here https://www.drugbank.ca/releases/latest#external-links. Under <b>Target Drug-UniProt Links</b>, Drug Group "All"
 
 <b>human_proteins.tsv</b>: This file comes from UniProt and contains a hand reviewed list of all human proteins. The database may be inspected here https://www.uniprot.org/uniprot/?query=reviewed:yes%20taxonomy:9606, for convience and to keep parameters we suggest running the cURL command below
