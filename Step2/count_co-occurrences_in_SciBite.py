@@ -10,14 +10,34 @@ tup_counts = {}
 
 papers = {}
 
-def process_abstract(abstract_terms,terms,tuples):
-   terms.update(abstract_terms)
-   combs = combinations(abstract_terms,2)
-   for comb in combs:
-      if(len(comb)==1):continue
-      if(comb[0] < comb[1]):tuples.add(comb)
-      else:tuples.add((comb[1],comb[0]))
-   return (terms, tuples)
+def process_abstract(abstract_terms):
+    
+    abst_tuples = set()
+    combs = combinations(abstract_terms,2)
+    for comb in combs:
+       if(len(comb)==1):continue
+       if(comb[0] < comb[1]):abst_tuples.add(comb)
+       else:abst_tuples.add((comb[1],comb[0]))
+    return abst_tuples
+
+
+def process_paragraphs(paragraph_dic):
+    paragraph_tuples = {}
+    filtered_para_tuples = set()
+    for i in range(7108): 
+        combs = combinations(paragraph_dic[i],2)
+        tuples = set()
+        for comb in combs:
+            if(len(comb)!=2):continue
+            if(comb[0] < comb[1]):tuples.add(comb)
+            elif(comb[0] > comb[1]):tuples.add((comb[1],comb[0]))
+        for t in tuples:
+            cnt = paragraph_tuples.get(t,0)
+            paragraph_tuples[t] = cnt+1
+    for t in paragraph_tuples:
+        if(paragraph_tuples[t]>=3):filtered_para_tuples.add(t)
+    return filtered_para_tuples 
+
 
 def tuple_and_term_count(paperidx,terms,tuples):
   for term in terms:
@@ -40,8 +60,9 @@ total_sentence_count = 0
 with open(fname, 'r') as f:
   next(f) #Ignore header.
   for line in f: total_sentence_count+=1
+print("We are looking at %d sentences in the filtered SciBite annotations."%total_sentence_count)
 
-
+paragraph_dic = {}
 with open(fname) as csvfile:
     reader = csv.DictReader(csvfile, delimiter='\t')
     last_doc = None
@@ -53,34 +74,51 @@ with open(fname) as csvfile:
         sent_id = dic['sentence_id']
     
         if(last_doc==None):
-          last_doc=doc_id
-          tuples = set()
-          terms = set()
-          abstract_terms = set()
+            last_doc=doc_id
+            for i in range(7108): paragraph_dic[i] = set()
+            tuples = set()
+            terms = set()
+            abstract_terms = set()
     
         #When the document changes, process the dataset. Give each paper it's vote.
         if(doc_id!=last_doc):
-          (terms,tuples) = process_abstract(abstract_terms,terms,tuples)
-          abstract_terms = set()
-          tuple_and_term_count(last_doc,terms,tuples)
-          tuples = set()
-          terms = set()
-          last_doc=doc_id
+            abst_tuples = process_abstract(abstract_terms)
+#            oldest_len = len(tuples)
+            tuples.update(abst_tuples)
+            para_tuples = process_paragraphs(paragraph_dic)
+#            abst_len = len(tuples)
+            tuples.update(para_tuples)
+#            if(len(abst_tuples)!=0):
+#                print(len(abst_tuples),"abst tups")
+#                print(doc_id,"sentence",oldest_len,"abst",abst_len,"final",len(tuples))
+            tuple_and_term_count(last_doc,terms,tuples)
+
+            tuples = set()
+            terms = set()
+            abstract_terms = set()
+            for i in range(7108): paragraph_dic[i] = set()
+            last_doc=doc_id
     
         if('abstract' in sent_id):
-          for x in plus_ids:
-             abstract_terms.add(x)
+            for x in plus_ids:
+                terms.add(x)
+                abstract_terms.add(x)
         if('body' in sent_id):
-          terms.update(plus_ids)
-          combs = combinations(plus_ids,2)
-          for comb in combs:
-             if(len(comb)!=2):continue
-             if(comb[0] < comb[1]):tuples.add(comb)
-             elif(comb[0] > comb[1]):tuples.add((comb[1],comb[0]))
+            (_,para_num,_) = sent_id.split("_")
+            for x in plus_ids:
+                terms.add(x)
+                paragraph_dic[int(para_num)].add(x)
+
+            combs = combinations(plus_ids,2)
+            for comb in combs:
+                if(len(comb)!=2):continue
+                if(comb[0] < comb[1]):tuples.add(comb)
+                elif(comb[0] > comb[1]):tuples.add((comb[1],comb[0]))
         if(cnt%10000==0):
             sys.stderr.write("Sentences processed:%d Percent Complete: %f\n"%(cnt,1.0*cnt / total_sentence_count))
         cnt+=1
-    (terms,tuples) = process_abstract(abstract_terms,terms,tuples)
+    abst_tuples = process_abstract(abstract_terms)
+    tuples.update(abst_tuples)
     tuple_and_term_count(last_doc,terms,tuples)
 
 with open(os.path.join(data_dir,'CORD19_co-occurrence_pairs.csv'),'w') as f:
