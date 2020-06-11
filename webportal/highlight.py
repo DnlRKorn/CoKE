@@ -39,6 +39,7 @@ def highlight_v2(pap_idx,terms):
    cur.execute(query,{"pap_idx":pap_idx})
    rows = cur.fetchall()
    abst_terms = set()
+   abst_dic = {}
    body_dic = {}
    
    for row in rows:
@@ -47,6 +48,11 @@ def highlight_v2(pap_idx,terms):
        doi = row[7]
        license = row[6]
        if(row[0]=='abstract'):
+           l = abst_dic.get(row[1],[])
+
+           #Sentence_start, Sentence_end, Terms
+           l.append((row[2],row[3],row[4]))
+           abst_dic[row[1]] = l
            for term in row[4]:
                abst_terms.add(term)
        if(row[0]=='body'):
@@ -73,12 +79,20 @@ def highlight_v2(pap_idx,terms):
        abst = []
 
 
+       para_cnt = 0
        for x in data.get('abstract',[]):
+          l = abst_dic.get(para_cnt,[])
+          para_cnt+=1
+          highlight_zone = []
+          for (sent_start,sent_end,sent_terms) in l:
+             if( len(terms.intersection(set(sent_terms))) > 0 ):
+                 highlight_zone.append((sent_start,sent_end))
+
           d = {}
           d['text']=x['text']
           d['highlight']=False
-          if(highlight_abst):
-              d['highlight_zone'] = [[0,len(x['text'])]] 
+          if(len(highlight_zone)!=0):
+              d['highlight_zone'] = highlight_zone
               d['highlight']=True
           abst.append(d)
               

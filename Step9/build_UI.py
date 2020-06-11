@@ -22,6 +22,8 @@ with open(os.path.join(data_dir,"human_proteins.tsv"),'r') as f:
   for line in f:
     prot_idx = line.split('\t')[0]
     prot_name = line.split('\t')[3].split('(')[0]
+    if(prot_idx.strip()=="P0DTC2"): prot_name = "Spike glycoprotein (SARS-CoV-2)"
+    if(prot_idx.strip()=="P59594"): prot_name = "Spike glycoprotein (SARS-CoV)"
     prot_names[prot_idx] = prot_name
 
 with open(os.path.join(data_dir,"corona_virus_proteins.tsv"),'r') as f:
@@ -29,6 +31,8 @@ with open(os.path.join(data_dir,"corona_virus_proteins.tsv"),'r') as f:
   for line in f:
     prot_idx = line.split('\t')[0]
     prot_name = line.split('\t')[3].split('(')[0]
+    if(prot_idx.strip()=="P0DTC2"): prot_name = "Spike glycoprotein (SARS-CoV-2)"
+    if(prot_idx.strip()=="P59594"): prot_name = "Spike glycoprotein (SARS-CoV)"
     prot_names[prot_idx] = prot_name
 
     
