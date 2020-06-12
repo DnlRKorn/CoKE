@@ -34,7 +34,7 @@ with open(fname,'r') as f, open(outfname,'w') as outf:
         if( "CVPROT#" in x and "DRUG#" in y):
             prot_idx = x.split("#")[1]
             drug_idx = y.split("#")[1]
-            if(prot_idx not in corona_proteins):continue
+            if((prot_idx not in corona_proteins) and (prot_idx not in human_proteins)):continue
             outf.write(line)
             cnt+=1
 
