@@ -14,7 +14,7 @@ with open(fname,'r') as f, open(outfname,'w') as outf:
         total_cnt+=1
         x = line.split(',')[0]
         y = line.split(',')[1]
-        if( "CVPROT#" in x and "DRUG#" in y ):
+        if( "CORONAPROT#" in x and "DRUG#" in y ):
             outf.write(line)
             cnt+=1
 

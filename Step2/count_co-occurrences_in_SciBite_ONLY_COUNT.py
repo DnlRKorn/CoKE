@@ -8,7 +8,6 @@ data_dir = os.path.join(os.path.dirname(os.getcwd()),"data")
 term_counts = {}
 tup_counts = {}
 
-papers = {}
 
 def process_abstract(abstract_terms):
     
@@ -32,27 +31,21 @@ def process_paragraphs(paragraph_dic):
             if(comb[0] < comb[1]):tuples.add(comb)
             elif(comb[0] > comb[1]):tuples.add((comb[1],comb[0]))
         for t in tuples:
-            cnt = paragraph_tuples.get(t,0)
-            paragraph_tuples[t] = cnt+1
+            paragraph_tuples[t] = True
     for t in paragraph_tuples:
         if(paragraph_tuples[t]>=3):filtered_para_tuples.add(t)
     return filtered_para_tuples 
 
 
 def tuple_and_term_count(paperidx,terms,tuples):
-  for term in terms:
-    x = term_counts.get(term,0)
-    term_counts[term] = x+1
+ # for term in terms:
+   # term_counts[term] = True 
 
   for tup in tuples:
     #Sanity checks on tuples. Ensure they are all have two distinct terms.
     if(len(tup)!=2): raise ValueError("Tuple not length two.",tup)
     if(tup[0]==tup[1]):raise ValueError("Tuple has two of the same element.",tup)
-    x = tup_counts.get(tup,0)
-    tup_counts[tup] = x+1
-    s = papers.get(tup,set())
-    s.add(paperidx)
-    papers[tup] = s
+    tup_counts[tup] = True 
 
 fname = os.path.join(data_dir,"cv19_scc_filtered_for_COVID.tsv")
 
@@ -60,7 +53,7 @@ total_sentence_count = 0
 with open(fname, 'r') as f:
   next(f) #Ignore header.
   for line in f: total_sentence_count+=1
-print("We are looking at %d sentences in the filtered SciBite annotations."%total_sentence_count)
+print("We are looking at %d sentences in the filtered SciBite annotations. Tup count %d."%(total_sentence_count,len(tup_counts)))
 
 paragraph_dic = {}
 with open(fname) as csvfile:
@@ -115,28 +108,11 @@ with open(fname) as csvfile:
                 if(comb[0] < comb[1]):tuples.add(comb)
                 elif(comb[0] > comb[1]):tuples.add((comb[1],comb[0]))
         if(cnt%10000==0):
-            sys.stderr.write("Sentences processed:%d Percent Complete: %f\n"%(cnt,1.0*cnt / total_sentence_count))
+            sys.stderr.write("Sentences processed:%d Percent Complete: %f Tup Cnt:%d\n"%(cnt,1.0*cnt / total_sentence_count,len(tup_counts)))
         cnt+=1
     abst_tuples = process_abstract(abstract_terms)
     tuples.update(abst_tuples)
     tuple_and_term_count(last_doc,terms,tuples)
-
-with open(os.path.join(data_dir,'CORD19_co-occurrence_pairs.csv'),'w') as f:
-  fieldnames = ['Term1','Term2','Term1Cnt','Term2Cnt','Co-occurrenceCnt','Papers']
-  writer = csv.DictWriter(f,fieldnames=fieldnames)
-  writer.writeheader()
-  for tup in tup_counts:
-    d = {}
-    d["Term1"] = tup[0]
-    d["Term2"] = tup[1]
-    d["Term1Cnt"] = term_counts[tup[0]]
-    d["Term2Cnt"] = term_counts[tup[1]]
-    d["Co-occurrenceCnt"] = tup_counts[tup]
-    paps = papers[tup]
-    paps = list(paps)
-    paps.sort()
-    d["Papers"] = ','.join(paps)
-    writer.writerow(d)
 
     
 print("We have %d tuples after filtering for protein/drug relationships!" % len(tup_counts))

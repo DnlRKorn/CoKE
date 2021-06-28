@@ -19,6 +19,7 @@ def convertDict(d):
 
     li_txt = '<div style="height:100px; overflow-y:scroll;">'
     for paper in d["Papers"].split("|"):
+        #link = "http://coke.mml.unc.edu/highlight?paper=%s&term1=CORONAPROT%%23%s&term2=DRUG%%23%s" % (paper.strip().replace('"',""),targ,drug)
         link = "http://coke.mml.unc.edu/highlight?paper=%s&term1=CVPROT%%23%s&term2=DRUG%%23%s" % (paper.strip().replace('"',""),targ,drug)
         li_txt+='<a href="%s">%s</a></br></br>' %(link,paper.strip().replace('"',''))
 
@@ -43,3 +44,4 @@ for csv_fname in os.listdir(os.path.join(data_dir,'csv')):
     json_data = {"data":json_rows}
     with open(os.path.join(data_dir,'json',json_fname),'w') as f:
         json.dump(json_data,f)
+        print(json_fname)

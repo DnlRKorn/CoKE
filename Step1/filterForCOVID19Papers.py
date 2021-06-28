@@ -2,7 +2,7 @@ import os
 
 data_dir = os.path.join(os.path.dirname(os.getcwd()),"data")
 covid_papers = set()
-
+total_papers = set()
 test = {}
 #with open("../
 with open(os.path.join(data_dir,"cv19_scc.tsv"),'r') as f:
@@ -11,6 +11,7 @@ with open(os.path.join(data_dir,"cv19_scc.tsv"),'r') as f:
         fields = line.split('\t')
         doc_id = fields[0]
         tags = fields[3]
+        total_papers.add(doc_id)
         if(doc_id in covid_papers):continue
         for tag in tags.split("|"):
             (key,value)=tag.split("#")
@@ -30,8 +31,7 @@ with open(os.path.join(data_dir,"cv19_scc.tsv"),'r') as f:
                     test[tag] = s
 for x in test:
     print(x,len(test[x]))
-print("We have identified %d papers in CORD19 which contain a tag related to COVID-19." % len(covid_papers))
-exit()
+print("We have identified %d papers in CORD19 which contain a tag related to COVID-19. Out of %d papers." % (len(covid_papers),len(total_papers) ) )
 
 with open(os.path.join(data_dir,"filtered_papers_cnt.txt"),'w') as f:
     f.write(str(len(covid_papers)))

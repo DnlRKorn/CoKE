@@ -16,6 +16,7 @@ def process_abstract(abstract_terms):
     combs = combinations(abstract_terms,2)
     for comb in combs:
        if(len(comb)==1):continue
+       if("DRUG#" not in comb[0] and "DRUG#" not in y ):
        if(comb[0] < comb[1]):abst_tuples.add(comb)
        else:abst_tuples.add((comb[1],comb[0]))
     return abst_tuples

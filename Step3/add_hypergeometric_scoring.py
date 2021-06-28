@@ -1,6 +1,8 @@
 from scipy.stats import hypergeom
+import sys
 import csv
 import os
+import math
 
 csv.field_size_limit(100000000)
 
@@ -31,6 +33,10 @@ with open(fname,'r') as inf, open(outfname,'w') as outf:
         #  without replacement from the total population (len curies).
         try:
            enrichp = -1.0 * hypergeom.logcdf(SharedCount - 1, total_paper_count, CountTerm2, CountTerm1)
+           if(math.isinf(enrichp)):
+               cdf = 1 - hypergeom.sf(SharedCount - 1, total_paper_count, CountTerm2, CountTerm1) + sys.float_info.min
+               if(cdf==0): enrichp = math.log(sys.float_info.min * sys.float_info.epsilon) 
+               else: enrichp = -1.0 * math.log(cdf)
         except:
             print(d)
             exit()
@@ -38,4 +44,4 @@ with open(fname,'r') as inf, open(outfname,'w') as outf:
         writer.writerow(d)
         cnt+=1 
         if(cnt%10000==0):
-            print(cnt,d)
+            print(cnt)

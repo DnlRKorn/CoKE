@@ -1,6 +1,5 @@
 import csv
 import os
-from bs4 import BeautifulSoup
 
 data_dir = os.path.join(os.path.dirname(os.getcwd()),"data")
 
@@ -27,7 +26,7 @@ with open(fname,'r') as f, open(outfname,'w') as outf:
         total_cnt+=1
         x = line.split(',')[0]
         y = line.split(',')[1]
-        if( "CVPROT#" in x and "DRUG#" in y):
+        if( "CORONAPROT#" in x and "DRUG#" in y):
             drug_idx = y.split("#")[1]
             if(drug_idx not in drug_bank):continue
             outf.write(line)
